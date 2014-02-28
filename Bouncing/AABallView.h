@@ -11,6 +11,7 @@
 @interface AABallView : UIView
 
 - (id)initWithFrame:(CGRect)frame worldSize:(CGSize)worldSize;
-- (void)moveWithGravity:(CGPoint)gravity;
+- (void)applyForce:(CGPoint)force;
+- (void)move;
 
 @end

@@ -66,7 +66,8 @@
     CGPoint gravityForce = CGPointMake( accelData.acceleration.x * self.gravity,
                                        -accelData.acceleration.y * self.gravity);
     for (AABallView *ballView in self.balls) {
-        [ballView moveWithGravity:gravityForce];
+        [ballView applyForce:gravityForce];
+        [ballView move];
     }
 }
 

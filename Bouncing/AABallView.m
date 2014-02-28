@@ -30,7 +30,16 @@
     return self;
 }
 
-- (void)moveWithGravity:(CGPoint)gravity
+- (void)applyForce:(CGPoint)force
+{
+    // Apply gravitational force:
+    CGPoint vel = self.velocity;
+    vel.x += force.x;
+    vel.y += force.y;
+    self.velocity = vel;
+}
+
+- (void)move
 {
     CGPoint vel = self.velocity;
 
@@ -49,10 +58,6 @@
     } else if (CGRectGetMinY(self.frame) <= 0) {
         vel.y = ABS(vel.y) * self.dampeningFactor;
     }
-
-    // Apply gravitational force:
-    vel.x += gravity.x;
-    vel.y += gravity.y;
     self.velocity = vel;
 
     // Update location:
