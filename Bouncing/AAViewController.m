@@ -9,16 +9,14 @@
 #import "AAViewController.h"
 @import QuartzCore;
 @import CoreMotion;
+#import "AABallView.h"
 
 @interface AAViewController ()
 
-@property (weak, nonatomic) IBOutlet UIView *ballView;
 @property (strong, nonatomic) CADisplayLink *displayLink;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *ballXConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *ballYConstraint;
+@property (strong, nonatomic) AABallView *ballView;
 
-@property (assign, nonatomic) CGPoint velocity;
 @property (assign, nonatomic) CGFloat gravity;
 @property (weak, nonatomic) IBOutlet UILabel *accelXLabel;
 @property (weak, nonatomic) IBOutlet UILabel *accelYLabel;
@@ -26,59 +24,21 @@
 @property (strong, nonatomic) CMMotionManager *motionManager;
 @end
 
-#define DAMPENING_FACTOR 0.9
-
 @implementation AAViewController
 
 - (void)tick:(CADisplayLink *)sender
 {
-    CGPoint vel = self.velocity;
-    
-    // Bounce of the left and right sides:
-    CGFloat width = CGRectGetWidth(self.view.bounds);
-    if (CGRectGetMaxX(self.ballView.frame) >= width) {
-        vel.x = -ABS(vel.x) * DAMPENING_FACTOR;
-    } else if (CGRectGetMinX(self.ballView.frame) <= 0) {
-        vel.x = ABS(vel.x) * DAMPENING_FACTOR;
-    }
-    
-    // Bounce off the bottom and top:
-    CGFloat height = CGRectGetHeight(self.view.bounds);
-    if (CGRectGetMaxY(self.ballView.frame) >= height) {
-        vel.y = -ABS(vel.y) * DAMPENING_FACTOR;
-    } else if (CGRectGetMinY(self.ballView.frame) <= 0) {
-        vel.y = ABS(vel.y) * DAMPENING_FACTOR;
-    }
-    
-    self.velocity = vel;
-    [self updateVelocityWithAcceleration];
-    
-    CGPoint pos = CGPointMake(self.ballXConstraint.constant,
-                              self.ballYConstraint.constant);
-    
-    // Constrain x-position of the ball:
-    CGFloat maxPosX = width - CGRectGetWidth(self.ballView.bounds);
-    self.ballXConstraint.constant = MAX(0, MIN(maxPosX, pos.x + self.velocity.x));
-    
-    // Constrain y-position of the ball:
-    CGFloat maxPosY = height - CGRectGetHeight(self.ballView.bounds);
-    self.ballYConstraint.constant = MAX(0, MIN(maxPosY, pos.y + self.velocity.y));
-}
-
-- (void)updateVelocityWithAcceleration
-{
     CMAccelerometerData *accelData = self.motionManager.accelerometerData;
-    
+
     // Update acceleration labels:
     self.accelXLabel.text = [NSString stringWithFormat:@"acceleration x: %.2f", accelData.acceleration.x];
     self.accelYLabel.text = [NSString stringWithFormat:@"acceleration y: %.2f", accelData.acceleration.y];
     self.accelZLabel.text = [NSString stringWithFormat:@"acceleration z: %.2f", accelData.acceleration.z];
-    
-    // Update velocity:
-    CGPoint vel = self.velocity;
-    vel.x += accelData.acceleration.x * self.gravity;
-    vel.y -= accelData.acceleration.y * self.gravity;
-    self.velocity = vel;
+
+    // Update ball position:
+    CGPoint gravityForce = CGPointMake( accelData.acceleration.x * self.gravity,
+                                       -accelData.acceleration.y * self.gravity);
+    [self.ballView moveWithGravity:gravityForce];
 }
 
 - (void)setupMotionManager
@@ -98,15 +58,22 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.velocity = CGPointMake(10.0, 10.0);
+    // Create a ball:
+    self.ballView = [[AABallView alloc] initWithFrame:CGRectMake(10, 10, 40, 40)
+                                            worldSize:self.view.bounds.size];
+    [self.view addSubview:self.ballView];
+
+    // Set world gravitational force (to center of earth via accelerometers):
     self.gravity = 5.0;
     
+    // Set up the display loop:
     self.displayLink = [CADisplayLink displayLinkWithTarget:self
                                                    selector:@selector(tick:)];
     
     [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop]
                            forMode:NSDefaultRunLoopMode];
     
+    // Initialize use of accelerometers:
     [self setupMotionManager];
 }
 

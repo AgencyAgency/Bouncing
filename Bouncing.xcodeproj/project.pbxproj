@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF4B9AC418C1497F002E9FD7 /* AABallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4B9AC318C1497F002E9FD7 /* AABallView.m */; };
 		CF70128018BBE02C007712BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF70127F18BBE02C007712BB /* Foundation.framework */; };
 		CF70128218BBE02C007712BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF70128118BBE02C007712BB /* CoreGraphics.framework */; };
 		CF70128418BBE02C007712BB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF70128318BBE02C007712BB /* UIKit.framework */; };
@@ -34,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF4B9AC218C1497F002E9FD7 /* AABallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AABallView.h; sourceTree = "<group>"; };
+		CF4B9AC318C1497F002E9FD7 /* AABallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AABallView.m; sourceTree = "<group>"; };
 		CF70127C18BBE02C007712BB /* Bouncing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bouncing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF70127F18BBE02C007712BB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF70128118BBE02C007712BB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -117,6 +120,8 @@
 				CF70129118BBE02C007712BB /* Main.storyboard */,
 				CF70129418BBE02C007712BB /* AAViewController.h */,
 				CF70129518BBE02C007712BB /* AAViewController.m */,
+				CF4B9AC218C1497F002E9FD7 /* AABallView.h */,
+				CF4B9AC318C1497F002E9FD7 /* AABallView.m */,
 				CF70129718BBE02C007712BB /* Images.xcassets */,
 				CF70128618BBE02C007712BB /* Supporting Files */,
 			);
@@ -253,6 +258,7 @@
 				CF70129018BBE02C007712BB /* AAAppDelegate.m in Sources */,
 				CF70129618BBE02C007712BB /* AAViewController.m in Sources */,
 				CF70128C18BBE02C007712BB /* main.m in Sources */,
+				CF4B9AC418C1497F002E9FD7 /* AABallView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +469,7 @@
 				CF7012B018BBE02C007712BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CF7012B118BBE02C007712BB /* Build configuration list for PBXNativeTarget "BouncingTests" */ = {
 			isa = XCConfigurationList;
@@ -471,6 +478,7 @@
 				CF7012B318BBE02C007712BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
