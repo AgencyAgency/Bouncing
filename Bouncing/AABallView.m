@@ -24,8 +24,9 @@
         _worldSize = worldSize;
         
         self.backgroundColor = [UIColor magentaColor];
-        self.velocity = CGPointMake(10.0, 10.0);
-        self.dampeningFactor = 0.9;
+        self.velocity = CGPointMake(arc4random_uniform(20) - 10.0,
+                                    arc4random_uniform(20) - 10.0);
+        self.dampeningFactor = 0.7 + (float)(arc4random_uniform(2)/10.0);
     }
     return self;
 }

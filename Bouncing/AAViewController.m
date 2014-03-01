@@ -22,9 +22,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *accelYLabel;
 @property (weak, nonatomic) IBOutlet UILabel *accelZLabel;
 @property (strong, nonatomic) CMMotionManager *motionManager;
+@property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressGesture;
 @end
 
 #define NUM_BALLS 20
+#define PRESS_FORCE_MAG 5.0
 
 @implementation AAViewController
 
@@ -53,6 +55,40 @@
     
 }
 
++ (CGFloat)magnitudeVec:(CGPoint)vec
+{
+    return sqrtf(powf(vec.x, 2) + powf(vec.y, 2));
+}
+
++ (CGPoint)normalFromPtA:(CGPoint)ptA toPtB:(CGPoint)ptB
+{
+    CGPoint aToB = CGPointMake(ptB.x - ptA.x,
+                               ptB.y - ptA.y);
+    CGFloat mag = [self magnitudeVec:aToB];
+    return CGPointMake(aToB.x/mag, aToB.y/mag);
+}
+
++ (CGFloat)distancePtA:(CGPoint)ptA toPtB:(CGPoint)ptB
+{
+    return sqrtf(powf(ptB.x - ptA.x, 2) + powf(ptB.y - ptA.y, 2));
+}
+
+- (void)applyPressForceToBall:(AABallView *)ballView pressLocation:(CGPoint)pressLocation
+{
+    CGFloat d = [self.class distancePtA:ballView.frame.origin
+                                  toPtB:pressLocation];
+
+    CGPoint pressUnitVec = [self.class normalFromPtA:ballView.frame.origin
+                                                    toPtB:pressLocation];
+    
+    CGFloat distanceFactor = d / CGRectGetWidth(self.view.bounds);
+    CGFloat massFactor = PRESS_FORCE_MAG * (0.7 + arc4random_uniform(7)/10.0);
+    CGPoint pressForce = CGPointMake(massFactor * pressUnitVec.x * distanceFactor,
+                                     massFactor * pressUnitVec.y * distanceFactor);
+
+    [ballView applyForce:pressForce];
+}
+
 - (void)tick:(CADisplayLink *)sender
 {
     CMAccelerometerData *accelData = self.motionManager.accelerometerData;
@@ -61,12 +97,23 @@
     self.accelXLabel.text = [NSString stringWithFormat:@"acceleration x: %.2f", accelData.acceleration.x];
     self.accelYLabel.text = [NSString stringWithFormat:@"acceleration y: %.2f", accelData.acceleration.y];
     self.accelZLabel.text = [NSString stringWithFormat:@"acceleration z: %.2f", accelData.acceleration.z];
-
+    
     // Update ball position:
     CGPoint gravityForce = CGPointMake( accelData.acceleration.x * self.gravity,
                                        -accelData.acceleration.y * self.gravity);
     for (AABallView *ballView in self.balls) {
+        // Apply Gravity:
         [ballView applyForce:gravityForce];
+        
+        // Apply Long Press Deflection:
+        if (self.longPressGesture.state == UIGestureRecognizerStateBegan ||
+            self.longPressGesture.state == UIGestureRecognizerStateChanged) {
+            CGPoint pressLoc = [self.longPressGesture locationInView:self.view];
+            [self applyPressForceToBall:ballView
+                          pressLocation:pressLoc];
+        }
+        
+        // Move the ball:
         [ballView move];
     }
 }

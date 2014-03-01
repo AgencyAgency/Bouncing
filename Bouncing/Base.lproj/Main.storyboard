@@ -36,14 +36,20 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="4Wn-CJ-PH9" appends="YES" id="8B2-St-JT4"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="accelXLabel" destination="WfH-Qq-hPB" id="YVK-i3-fqj"/>
                         <outlet property="accelYLabel" destination="X7S-Hk-2cm" id="JQN-Lf-K0a"/>
                         <outlet property="accelZLabel" destination="Dyb-9K-Cjf" id="Ycj-Pi-TFg"/>
+                        <outlet property="longPressGesture" destination="4Wn-CJ-PH9" id="jLR-eT-L90"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="4Wn-CJ-PH9"/>
             </objects>
         </scene>
     </scenes>
