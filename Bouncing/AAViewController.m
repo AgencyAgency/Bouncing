@@ -15,7 +15,7 @@
 
 @property (strong, nonatomic) CADisplayLink *displayLink;
 
-@property (strong, nonatomic) AABallView *ballView;
+@property (strong, nonatomic) NSMutableArray *balls;
 
 @property (assign, nonatomic) CGFloat gravity;
 @property (weak, nonatomic) IBOutlet UILabel *accelXLabel;
@@ -24,7 +24,34 @@
 @property (strong, nonatomic) CMMotionManager *motionManager;
 @end
 
+#define NUM_BALLS 20
+
 @implementation AAViewController
+
+- (AABallView *)ballAtRandomLocation
+{
+    CGFloat width = CGRectGetWidth(self.view.bounds);
+    CGFloat height = CGRectGetHeight(self.view.bounds);
+    CGFloat x = arc4random() % (int)width;
+    CGFloat y = arc4random() % (int)height;
+    return [[AABallView alloc] initWithFrame:CGRectMake(x, y, 40, 40)
+                                   worldSize:self.view.bounds.size];
+}
+
+- (NSMutableArray *)balls
+{
+    if (!_balls) {
+        NSMutableArray *allBalls = [NSMutableArray array];
+        for (int i=0; i<NUM_BALLS; i++) {
+            AABallView *newBall = [self ballAtRandomLocation];
+            [allBalls addObject:newBall];
+            [self.view addSubview:newBall];
+        }
+        _balls = allBalls;
+    }
+    return _balls;
+    
+}
 
 - (void)tick:(CADisplayLink *)sender
 {
@@ -38,7 +65,9 @@
     // Update ball position:
     CGPoint gravityForce = CGPointMake( accelData.acceleration.x * self.gravity,
                                        -accelData.acceleration.y * self.gravity);
-    [self.ballView moveWithGravity:gravityForce];
+    for (AABallView *ballView in self.balls) {
+        [ballView moveWithGravity:gravityForce];
+    }
 }
 
 - (void)setupMotionManager
@@ -59,9 +88,7 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     // Create a ball:
-    self.ballView = [[AABallView alloc] initWithFrame:CGRectMake(10, 10, 40, 40)
-                                            worldSize:self.view.bounds.size];
-    [self.view addSubview:self.ballView];
+
 
     // Set world gravitational force (to center of earth via accelerometers):
     self.gravity = 5.0;
