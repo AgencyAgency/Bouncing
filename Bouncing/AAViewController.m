@@ -27,6 +27,7 @@
 
 #define NUM_BALLS 20
 #define PRESS_FORCE_MAG 5.0
+#define GRAVITY_MAG 2.0
 
 @implementation AAViewController
 
@@ -99,8 +100,8 @@
     self.accelZLabel.text = [NSString stringWithFormat:@"acceleration z: %.2f", accelData.acceleration.z];
     
     // Update ball position:
-    CGPoint gravityForce = CGPointMake( accelData.acceleration.x * self.gravity,
-                                       -accelData.acceleration.y * self.gravity);
+    CGPoint gravityForce = CGPointMake( accelData.acceleration.x * GRAVITY_MAG,
+                                       -accelData.acceleration.y * GRAVITY_MAG);
     for (AABallView *ballView in self.balls) {
         // Apply Gravity:
         [ballView applyForce:gravityForce];
@@ -134,12 +135,6 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    // Create a ball:
-
-
-    // Set world gravitational force (to center of earth via accelerometers):
-    self.gravity = 5.0;
     
     // Set up the display loop:
     self.displayLink = [CADisplayLink displayLinkWithTarget:self
